@@ -70,7 +70,7 @@ def investigate_seed(event_data, n_nodes, seeds, colors, min_ts=1229231100, max_
     return fig
 
 
-def simulate_si(event_data, seed=0, p=1., ts_intervals=None):
+def simulate_si(event_data, seed=0, p=1., ts_intervals=None, create_animation=False):
 
     # Set the seed of the infection in the dict
     infection_times = {seed: event_data[0]["StartTime"]}
@@ -87,7 +87,9 @@ def simulate_si(event_data, seed=0, p=1., ts_intervals=None):
     infection_list = list(infection_times.values())
     infection_list.sort()
     infection_list = np.array(infection_list)
-    # visualize_si(infection_list, fps=1, save_fname="anim.html")
+
+    if create_animation:
+        visualize_si(infection_list, fps=1, save_fname="anim.html")
 
     # Task 1
     # print("Anchorage infected at: {}".format(infection_times[41]))
@@ -104,13 +106,13 @@ if __name__ == "__main__":
     event_data.sort(order=["StartTime"])
 
     n_nodes = net.number_of_nodes()
+    colors = ['b', 'r', 'g', 'm', 'k', 'c']
 
-    # Task 1
+    # Task 1 ==============================================
     # simulate_si(event_data=event_data, seed=0)
 
-    # Task 2
+    # Task 2 ==============================================
     # probs = [0.01, 0.05, 0.1, 0.5, 1.0]
-    # colors = ['b', 'r', 'g', 'm', 'k', 'c']
     #
     # fig = investigate_p(event_data=event_data,
     #               n_nodes=n_nodes,
@@ -122,9 +124,8 @@ if __name__ == "__main__":
     #
     # fig.savefig('./p_investigation.pdf')
 
-    # Task 3
+    # Task 3 ==============================================
     seeds = [0, 4, 41, 100, 200]
-    colors = ['b', 'r', 'g', 'm', 'k', 'c']
 
     fig = investigate_seed(event_data=event_data,
                   n_nodes=n_nodes,

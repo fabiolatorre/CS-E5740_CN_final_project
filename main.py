@@ -1,7 +1,7 @@
 import networkx as nx
 import numpy as np
 import random
-from si_animator import visualize_si
+from si_animator import visualize_si, plot_network_usa
 import matplotlib as mpl
 import matplotlib.pylab as plt
 
@@ -70,7 +70,7 @@ def investigate_seed(event_data, n_nodes, seeds, colors, min_ts=1229231100, max_
     return fig
 
 
-def simulate_si(event_data, seed=0, p=1., ts_intervals=None, create_animation=False):
+def simulate_si(event_data, seed=0, p=1., ts_intervals=None, create_animation=False, print_ANC=False):
 
     # Set the seed of the infection in the dict
     infection_times = {seed: event_data[0]["StartTime"]}
@@ -91,8 +91,8 @@ def simulate_si(event_data, seed=0, p=1., ts_intervals=None, create_animation=Fa
     if create_animation:
         visualize_si(infection_list, fps=1, save_fname="anim.html")
 
-    # Task 1
-    # print("Anchorage infected at: {}".format(infection_times[41]))
+    if print_ANC:
+        print("Anchorage infected at: {}".format(infection_times[41]))
 
     if ts_intervals is None:
         return infection_list
@@ -106,34 +106,53 @@ if __name__ == "__main__":
     event_data.sort(order=["StartTime"])
 
     n_nodes = net.number_of_nodes()
+    min_ts = min(event_data[:]["StartTime"])
+    max_ts = max(event_data[:]["EndTime"])
     colors = ['b', 'r', 'g', 'm', 'k', 'c']
 
-    # Task 1 ==============================================
-    # simulate_si(event_data=event_data, seed=0)
-
-    # Task 2 ==============================================
+    # # Task 1 ==============================================
+    # print("Started first simulation")
+    # simulate_si(event_data=event_data, seed=0, print_ANC=True)
+    #
+    # # Task 2 ==============================================
+    # print("Started probability investigation")
     # probs = [0.01, 0.05, 0.1, 0.5, 1.0]
     #
     # fig = investigate_p(event_data=event_data,
-    #               n_nodes=n_nodes,
-    #               probs=probs,
-    #               colors=colors,
-    #               iterations=10,
-    #               min_ts=min(event_data[:]["StartTime"]),
-    #               max_ts=max(event_data[:]["EndTime"]))
+    #                     n_nodes=n_nodes,
+    #                     probs=probs,
+    #                     colors=colors,
+    #                     iterations=10,
+    #                     min_ts=min_ts,
+    #                     max_ts=max_ts)
     #
     # fig.savefig('./p_investigation.pdf')
+    # fig.clear()
 
     # Task 3 ==============================================
+    print("Started seed investigation")
     seeds = [0, 4, 41, 100, 200]
 
     fig = investigate_seed(event_data=event_data,
-                  n_nodes=n_nodes,
-                  seeds=seeds,
-                  colors=colors,
-                  iterations=10,
-                  min_ts=min(event_data[:]["StartTime"]),
-                  max_ts=max(event_data[:]["EndTime"]))
+                           n_nodes=n_nodes,
+                           seeds=seeds,
+                           colors=colors,
+                           iterations=10,
+                           min_ts=min_ts,
+                           max_ts=max_ts)
 
     fig.savefig('./seed_investigation.pdf')
+    fig.clear()
+
+    # Task 4 ==============================================
+
+    # Task 5 ==============================================
+
+    # Task 6 ==============================================
+
+    # Bonus Task 1 ========================================
+
+    # Task 7 ==============================================
+
+    # Bonus Task 2 ========================================
 

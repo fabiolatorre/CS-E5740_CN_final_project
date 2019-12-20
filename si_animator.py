@@ -158,13 +158,13 @@ def plot_network_usa(net, xycoords, edges=None, linewidths=None):
     linewidths : a list with equal length and order to egdes -list.
             See nx.draw_networkx documentation
 
-	example code:
+    example code:
 
-	import si_animator
-	import random
-	import pandas as pd
-	import numpy as np
-	import networkx as nx
+    import si_animator
+    import random
+    import pandas as pd
+    import numpy as np
+    import networkx as nx
 
     id_data = np.genfromtxt(csv_path, delimiter=',', dtype=None, names=True)
     xycoords = {}
@@ -172,12 +172,12 @@ def plot_network_usa(net, xycoords, edges=None, linewidths=None):
         xycoords[str(row['id'])] = (row['xcoordviz'], row['ycoordviz'])
     net = nx.read_weighted_edgelist(network_path)
 
-	lw_list =[]
-	edgelist =[]
-	for edge in net.edges():
-		lw_list.append(random.random()) # change this at least
-		edgelist.append(edge) # edgelist created to maintain the right order
-	si_animator.plot_network_usa(net, xycoords, edges=edgelist, linewidths=lw_list)
+    lw_list =[]
+    edgelist =[]
+    for edge in net.edges():
+        lw_list.append(random.random()) # change this at least
+        edgelist.append(edge) # edgelist created to maintain the right order
+    si_animator.plot_network_usa(net, xycoords, edges=edgelist, linewidths=lw_list)
 
     """
     fig = plt.figure()

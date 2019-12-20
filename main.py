@@ -1,10 +1,12 @@
 import networkx as nx
 import numpy as np
 import random
+import os
 from si_animator import visualize_si, plot_network_usa
 import matplotlib.pylab as plt
 from sklearn.preprocessing import minmax_scale
 from scipy.stats import spearmanr
+import logging
 
 
 def merge_dicts(dict1, dict2):
@@ -269,7 +271,7 @@ def compute_net_links_stats_dict(net: nx.Graph):
     return links_stats_dict
 
 
-def plot_statistics(net: nx.Graph, event_data, p=.5, iterations=50):
+def plot_statistics(net: nx.Graph, event_data, p=.5, iterations=50, result_dir="."):
     """
     Given a network and an array of events, computes the median infection times of the nodes and plots it as function
     of different network statistics and prints the spearman correlation between the median time and the statistics
@@ -277,6 +279,7 @@ def plot_statistics(net: nx.Graph, event_data, p=.5, iterations=50):
     :param event_data: numpy array containing data relative to the events
     :param p: probability of infection
     :param iterations: number of iterations on which the median infection times are computed
+    :param result_dir: directory in which plots must be stored
     """
     # Compute median infection time dictionary
     median_infection_times = compute_median_infection_times(net, event_data, p, iterations)
@@ -293,19 +296,20 @@ def plot_statistics(net: nx.Graph, event_data, p=.5, iterations=50):
         plt.ylabel('Normalized Median Infection Time')
         plt.scatter(x, minmax_scale(y))  # TODO: check normalization
         plt.title('Median Infect Time as function of {}'.format(stat_name))
-        plt.savefig('{}.pdf'.format(stat_name.replace(" ", "_")))
+        plt.savefig('{}/{}.pdf'.format(result_dir, stat_name.replace(" ", "_")))
         plt.close()
 
         spearman_coeff = spearmanr(x, y).correlation
         print('Spearman rank-correlation coefficient of {}: {:.5f}'.format(stat_name, spearman_coeff))
 
 
-def plot_links_statistics(net: nx.Graph, link_weights):
+def plot_links_statistics(net: nx.Graph, link_weights, result_dir="."):
     """
     Given a network and a set of weights for the links, plots the weights of the edges as function of some
     network edge statistics and prints the spearman correlation between the weights and the statistics
     :param net: network to analyze
     :param link_weights: weights of the edges to be plotted as function of some edge statistics
+    :param result_dir: directory in which plots must be stored
     """
     # Compute the network edge statistics
     net_links_stats_dict = compute_net_links_stats_dict(net)
@@ -330,7 +334,7 @@ def plot_links_statistics(net: nx.Graph, link_weights):
         plt.ylabel('Transmission ratio')
         plt.scatter(minmax_scale(x), y)  # TODO: Check normalization
         plt.title('Transmission ratio as function of {}'.format(stat_name))
-        plt.savefig('{}.pdf'.format(stat_name.replace(" ", "_")))
+        plt.savefig('{}/{}.pdf'.format(result_dir, stat_name.replace(" ", "_")))
         plt.close()
 
         spearman_coeff = spearmanr(x, y).correlation
@@ -473,67 +477,83 @@ def simulate_si(event_data, seed=0, p=.5, ts_intervals=None,
 
 
 if __name__ == "__main__":
+    logging.basicConfig()
+    logging.getLogger().setLevel(logging.INFO)
+
     net: nx.Graph = nx.read_weighted_edgelist("./aggregated_US_air_traffic_network_undir.edg")
     ndtype = [("Source", int), ("Destination", int), ("StartTime", int), ("EndTime", int)]
     event_data = np.genfromtxt('events_US_air_traffic_GMT.txt', names=True, dtype=ndtype)
     event_data.sort(order=["StartTime"])
 
+    results_directory = "./results"
+    if not os.path.exists(results_directory):
+        os.makedirs(results_directory)
+
     n_nodes = net.number_of_nodes()
     min_ts = min(event_data[:]["StartTime"])
     max_ts = max(event_data[:]["EndTime"])
 
-    # Task 1 ==============================================
-    print("Started ANC infection time computation")
-    infection_dict = simulate_si(event_data=event_data, seed=0, p=1, return_dict=True)
-    print("Anchorage infected at: {}".format(infection_dict[41]))
-
-    # Task 2 ==============================================
-    print("\nStarted probability investigation")
-    probs = [0.01, 0.05, 0.1, 0.5, 1.0]
-
-    fig = investigate_p(event_data=event_data,
-                        n_nodes=n_nodes,
-                        probs=probs,
-                        iterations=10,
-                        min_ts=min_ts,
-                        max_ts=max_ts)
-
-    fig.savefig('./p_investigation.pdf')
-    fig.clear()
-
-    # Task 3 ==============================================
-    print("\nStarted seed investigation")
-    seeds = [0, 4, 41, 100, 200]
-
-    fig = investigate_seed(event_data=event_data,
-                           n_nodes=n_nodes,
-                           seeds=seeds,
-                           iterations=10,
-                           min_ts=min_ts,
-                           max_ts=max_ts)
-
-    fig.savefig('./seed_investigation.pdf')
-    fig.clear()
-
-    # Task 4 ==============================================
-    print("\nStarted computation of node statistics")
-    plot_statistics(net=net, event_data=event_data, p=.5, iterations=50)
-
-    # Task 5 ==============================================
-    print("\nStarted node simulation with immune nodes")
-
-    n_immune_nodes = 10
-
-    immune_nodes = compute_immune_nodes(net, n_immune_nodes)
-    fig = investigate_immunity(net, event_data, immune_nodes)
-
-    fig.savefig('./immunity_investigation.pdf')
-    fig.clear()
+    # # Task 1 ==============================================
+    # logging.info("[Starting] Task 1: ANC infection time computation")
+    # infection_dict = simulate_si(event_data=event_data, seed=0, p=1, return_dict=True)
+    # print("Anchorage infected at: {}".format(infection_dict[41]))
+    # logging.info("[Finished] Taks 1")
+    #
+    # # Task 2 ==============================================
+    # logging.info("[Starting] Task 2: probability investigation")
+    # probs = [0.01, 0.05, 0.1, 0.5, 1.0]
+    #
+    # fig = investigate_p(event_data=event_data,
+    #                     n_nodes=n_nodes,
+    #                     probs=probs,
+    #                     iterations=10,
+    #                     min_ts=min_ts,
+    #                     max_ts=max_ts)
+    #
+    # fig.savefig('{}/p_investigation.pdf'.format(results_directory))
+    # fig.clear()
+    # logging.info("[Finished] Task 2")
+    #
+    # # Task 3 ==============================================
+    # logging.info("[Starting] Task 3: seed investigation")
+    # seeds = [0, 4, 41, 100, 200]
+    #
+    # fig = investigate_seed(event_data=event_data,
+    #                        n_nodes=n_nodes,
+    #                        seeds=seeds,
+    #                        iterations=10,
+    #                        min_ts=min_ts,
+    #                        max_ts=max_ts)
+    #
+    # fig.savefig('{}/seed_investigation.pdf'.format(results_directory))
+    # fig.clear()
+    #
+    # logging.info("[Finished] Task 3")
+    #
+    # # Task 4 ==============================================
+    # logging.info("[Starting] Task 4: computation of node statistics")
+    #
+    # plot_statistics(net=net, event_data=event_data, p=.5, iterations=50, result_dir=results_directory)
+    #
+    # logging.info("[Finished] Task 4")
+    #
+    # # Task 5 ==============================================
+    # logging.info("[Starting] Task 5: node simulation with immune nodes")
+    #
+    # n_immune_nodes = 10
+    #
+    # immune_nodes = compute_immune_nodes(net, n_immune_nodes)
+    # fig = investigate_immunity(net, event_data, immune_nodes)
+    #
+    # fig.savefig('{}/immunity_investigation.pdf'.format(results_directory))
+    # fig.clear()
+    #
+    # logging.info("[Finished] Task 5")
 
     # Task 6 ==============================================
-    print("\nStarted link transmission simulation")
+    logging.info("[Starting] Task 6: link transmission simulation")
 
-    id_data = np.genfromtxt("./US_airport_id_info.csv", delimiter=',', dtype=None, names=True)
+    id_data = np.genfromtxt("./US_airport_id_info.csv", delimiter=',', dtype=None, names=True, encoding=None)
     xycoords = {}
     for row in id_data:
         xycoords[str(row['id'])] = (row['xcoordviz'], row['ycoordviz'])
@@ -542,11 +562,15 @@ if __name__ == "__main__":
 
     plot_network_usa(net, xycoords, edges=list(links_weights.keys()), linewidths=list(links_weights.values()))
     plt.title("Transmission Links")
-    plt.savefig('plot_network_usa.pdf')
+    plt.savefig('{}/plot_network_usa.pdf'.format(results_directory))
+    plt.close()
 
     max_spanning_tree = nx.maximum_spanning_tree(net)
     max_spanning_tree_edges = list(max_spanning_tree.edges)
     plot_network_usa(max_spanning_tree, xycoords, max_spanning_tree_edges, [1 for _ in max_spanning_tree_edges])
-    plt.savefig('plot_max_spanning_tree.pdf')
+    plt.savefig('{}/plot_max_spanning_tree.pdf'.format(results_directory))
+    plt.close()
 
-    plot_links_statistics(net, links_weights)
+    plot_links_statistics(net, links_weights, result_dir=results_directory)
+
+    logging.info("[Finished] Task 6")

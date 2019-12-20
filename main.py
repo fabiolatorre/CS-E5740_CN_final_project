@@ -7,6 +7,7 @@ import matplotlib.pylab as plt
 from sklearn.preprocessing import minmax_scale
 from scipy.stats import spearmanr
 import logging
+import time
 
 
 def merge_dicts(dict1, dict2):
@@ -463,7 +464,7 @@ def simulate_si(event_data, seed=0, p=.5, ts_intervals=None,
     infection_list.sort()
     infection_list = np.array(infection_list)
 
-    # If required, generate and save the animation
+    # If required, generate and save the animation (this takes some time)
     if generate_animation:
         visualize_si(infection_list, fps=5, save_fname="anim.html")
 
@@ -497,7 +498,8 @@ if __name__ == "__main__":
     logging.info("[Starting] Task 1: ANC infection time computation")
     infection_dict = simulate_si(event_data=event_data, seed=0, p=1, return_dict=True)
     print("Anchorage infected at: {}".format(infection_dict[41]))
-    logging.info("[Finished] Taks 1")
+    time.sleep(.1)
+    logging.info("[Finished] Taks 1\n")
 
     # Task 2 ==============================================
     logging.info("[Starting] Task 2: probability investigation")
@@ -512,7 +514,7 @@ if __name__ == "__main__":
 
     fig.savefig('{}/p_investigation.pdf'.format(results_directory))
     fig.clear()
-    logging.info("[Finished] Task 2")
+    logging.info("[Finished] Task 2\n")
 
     # Task 3 ==============================================
     logging.info("[Starting] Task 3: seed investigation")
@@ -528,14 +530,15 @@ if __name__ == "__main__":
     fig.savefig('{}/seed_investigation.pdf'.format(results_directory))
     fig.clear()
 
-    logging.info("[Finished] Task 3")
+    logging.info("[Finished] Task 3\n")
 
     # Task 4 ==============================================
-    logging.info("[Starting] Task 4: computation of node statistics")
+    logging.info("[Starting] Task 4: nodes' median infection time vs node statistics")
 
     plot_statistics(net=net, event_data=event_data, p=.5, iterations=50, result_dir=results_directory)
 
-    logging.info("[Finished] Task 4")
+    time.sleep(.1)
+    logging.info("[Finished] Task 4\n")
 
     # Task 5 ==============================================
     logging.info("[Starting] Task 5: node simulation with immune nodes")
@@ -548,7 +551,7 @@ if __name__ == "__main__":
     fig.savefig('{}/immunity_investigation.pdf'.format(results_directory))
     fig.clear()
 
-    logging.info("[Finished] Task 5")
+    logging.info("[Finished] Task 5\n")
 
     # Task 6 ==============================================
     logging.info("[Starting] Task 6: link transmission simulation")
@@ -568,9 +571,11 @@ if __name__ == "__main__":
     max_spanning_tree = nx.maximum_spanning_tree(net)
     max_spanning_tree_edges = list(max_spanning_tree.edges)
     plot_network_usa(max_spanning_tree, xycoords, max_spanning_tree_edges, [1 for _ in max_spanning_tree_edges])
+    plt.title("Maximal Spanning Tree")
     plt.savefig('{}/plot_max_spanning_tree.pdf'.format(results_directory))
     plt.close()
 
     plot_links_statistics(net, links_weights, result_dir=results_directory)
 
-    logging.info("[Finished] Task 6")
+    time.sleep(.1)
+    logging.info("[Finished] Task 6\n")

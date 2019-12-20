@@ -222,4 +222,4 @@ pip-selfcheck.json
 *.htm
 *.mp4
 *.pdf
-*/results/
+/results/

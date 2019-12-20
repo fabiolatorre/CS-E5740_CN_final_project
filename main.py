@@ -294,7 +294,7 @@ def plot_statistics(net: nx.Graph, event_data, p=.5, iterations=50, result_dir="
 
         plt.xlabel('{}'.format(stat_name))
         plt.ylabel('Normalized Median Infection Time')
-        plt.scatter(x, minmax_scale(y))  # TODO: check normalization
+        plt.scatter(x, minmax_scale(y))
         plt.title('Median Infect Time as function of {}'.format(stat_name))
         plt.savefig('{}/{}.pdf'.format(result_dir, stat_name.replace(" ", "_")))
         plt.close()
@@ -332,7 +332,7 @@ def plot_links_statistics(net: nx.Graph, link_weights, result_dir="."):
 
         plt.xlabel('Normalized {}'.format(stat_name))
         plt.ylabel('Transmission ratio')
-        plt.scatter(minmax_scale(x), y)  # TODO: Check normalization
+        plt.scatter(minmax_scale(x), y)
         plt.title('Transmission ratio as function of {}'.format(stat_name))
         plt.savefig('{}/{}.pdf'.format(result_dir, stat_name.replace(" ", "_")))
         plt.close()
@@ -493,62 +493,62 @@ if __name__ == "__main__":
     min_ts = min(event_data[:]["StartTime"])
     max_ts = max(event_data[:]["EndTime"])
 
-    # # Task 1 ==============================================
-    # logging.info("[Starting] Task 1: ANC infection time computation")
-    # infection_dict = simulate_si(event_data=event_data, seed=0, p=1, return_dict=True)
-    # print("Anchorage infected at: {}".format(infection_dict[41]))
-    # logging.info("[Finished] Taks 1")
-    #
-    # # Task 2 ==============================================
-    # logging.info("[Starting] Task 2: probability investigation")
-    # probs = [0.01, 0.05, 0.1, 0.5, 1.0]
-    #
-    # fig = investigate_p(event_data=event_data,
-    #                     n_nodes=n_nodes,
-    #                     probs=probs,
-    #                     iterations=10,
-    #                     min_ts=min_ts,
-    #                     max_ts=max_ts)
-    #
-    # fig.savefig('{}/p_investigation.pdf'.format(results_directory))
-    # fig.clear()
-    # logging.info("[Finished] Task 2")
-    #
-    # # Task 3 ==============================================
-    # logging.info("[Starting] Task 3: seed investigation")
-    # seeds = [0, 4, 41, 100, 200]
-    #
-    # fig = investigate_seed(event_data=event_data,
-    #                        n_nodes=n_nodes,
-    #                        seeds=seeds,
-    #                        iterations=10,
-    #                        min_ts=min_ts,
-    #                        max_ts=max_ts)
-    #
-    # fig.savefig('{}/seed_investigation.pdf'.format(results_directory))
-    # fig.clear()
-    #
-    # logging.info("[Finished] Task 3")
-    #
-    # # Task 4 ==============================================
-    # logging.info("[Starting] Task 4: computation of node statistics")
-    #
-    # plot_statistics(net=net, event_data=event_data, p=.5, iterations=50, result_dir=results_directory)
-    #
-    # logging.info("[Finished] Task 4")
-    #
-    # # Task 5 ==============================================
-    # logging.info("[Starting] Task 5: node simulation with immune nodes")
-    #
-    # n_immune_nodes = 10
-    #
-    # immune_nodes = compute_immune_nodes(net, n_immune_nodes)
-    # fig = investigate_immunity(net, event_data, immune_nodes)
-    #
-    # fig.savefig('{}/immunity_investigation.pdf'.format(results_directory))
-    # fig.clear()
-    #
-    # logging.info("[Finished] Task 5")
+    # Task 1 ==============================================
+    logging.info("[Starting] Task 1: ANC infection time computation")
+    infection_dict = simulate_si(event_data=event_data, seed=0, p=1, return_dict=True)
+    print("Anchorage infected at: {}".format(infection_dict[41]))
+    logging.info("[Finished] Taks 1")
+
+    # Task 2 ==============================================
+    logging.info("[Starting] Task 2: probability investigation")
+    probs = [0.01, 0.05, 0.1, 0.5, 1.0]
+
+    fig = investigate_p(event_data=event_data,
+                        n_nodes=n_nodes,
+                        probs=probs,
+                        iterations=10,
+                        min_ts=min_ts,
+                        max_ts=max_ts)
+
+    fig.savefig('{}/p_investigation.pdf'.format(results_directory))
+    fig.clear()
+    logging.info("[Finished] Task 2")
+
+    # Task 3 ==============================================
+    logging.info("[Starting] Task 3: seed investigation")
+    seeds = [0, 4, 41, 100, 200]
+
+    fig = investigate_seed(event_data=event_data,
+                           n_nodes=n_nodes,
+                           seeds=seeds,
+                           iterations=10,
+                           min_ts=min_ts,
+                           max_ts=max_ts)
+
+    fig.savefig('{}/seed_investigation.pdf'.format(results_directory))
+    fig.clear()
+
+    logging.info("[Finished] Task 3")
+
+    # Task 4 ==============================================
+    logging.info("[Starting] Task 4: computation of node statistics")
+
+    plot_statistics(net=net, event_data=event_data, p=.5, iterations=50, result_dir=results_directory)
+
+    logging.info("[Finished] Task 4")
+
+    # Task 5 ==============================================
+    logging.info("[Starting] Task 5: node simulation with immune nodes")
+
+    n_immune_nodes = 10
+
+    immune_nodes = compute_immune_nodes(net, n_immune_nodes)
+    fig = investigate_immunity(net, event_data, immune_nodes)
+
+    fig.savefig('{}/immunity_investigation.pdf'.format(results_directory))
+    fig.clear()
+
+    logging.info("[Finished] Task 5")
 
     # Task 6 ==============================================
     logging.info("[Starting] Task 6: link transmission simulation")

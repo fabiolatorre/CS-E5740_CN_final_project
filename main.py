@@ -498,7 +498,7 @@ if __name__ == "__main__":
     logging.info("[Starting] Task 1: ANC infection time computation")
     infection_dict = simulate_si(event_data=event_data, seed=0, p=1, return_dict=True)
     print("Anchorage infected at: {}".format(infection_dict[41]))
-    time.sleep(.1)
+    time.sleep(.1)  # preserve printing order
     logging.info("[Finished] Taks 1\n")
 
     # Task 2 ==============================================
@@ -537,7 +537,7 @@ if __name__ == "__main__":
 
     plot_statistics(net=net, event_data=event_data, p=.5, iterations=50, result_dir=results_directory)
 
-    time.sleep(.1)
+    time.sleep(.1)  # preserve printing order
     logging.info("[Finished] Task 4\n")
 
     # Task 5 ==============================================
@@ -577,5 +577,5 @@ if __name__ == "__main__":
 
     plot_links_statistics(net, links_weights, result_dir=results_directory)
 
-    time.sleep(.1)
+    time.sleep(.1)  # preserve printing order
     logging.info("[Finished] Task 6\n")
